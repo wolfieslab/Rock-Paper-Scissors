@@ -1,5 +1,34 @@
 let computerScore = 0;
-let humanScore = 0;
+let playerScore = 0;
+let winner = "";
+
+const rock = document.querySelector("#rock");
+const paper = document.querySelector("#paper");
+const scissor = document.querySelector("#scissor");
+const playerScorePara = document.querySelector("#player-score");
+const computerScorePara = document.querySelector("#computer-score");
+const scoreInfo = document.querySelector("#score-info");
+const scoreMessage = document.querySelector("#score-message");
+const winnerMessage = document.querySelector("#winner-message");
+const restart = document.querySelector("#restart");
+const popup = document.querySelector("#popup");
+
+restart.addEventListener("click", () => {
+    restartGame();
+});
+
+rock.addEventListener("click", () => {
+    playRound("rock", getComputerChoice());
+});
+
+paper.addEventListener("click", () => {
+    playRound("paper", getComputerChoice());
+});
+
+scissor.addEventListener("click", () => {
+    playRound("scissor", getComputerChoice());
+});
+
 
 //computer chooses between rock, paper, scissors
 function getComputerChoice() {
@@ -23,102 +52,63 @@ function getComputerChoice() {
     }
 }
 
-//take user's choice between rock, paper, scissors
-function getHumanChoice() {
-    let choice = prompt
-        (`What is your choice
-    - Rock    - Paper   - Scissor`);
-    return choice;
-}
-
-
-function playGame() {
-
-    //compare both user's and computer's choice
-    function playRound(humanChoice, computerChoice) {
-        const userChoice = humanChoice.toLowerCase();
-        console.log(userChoice);
-        console.log(computerChoice);
-
-        switch (userChoice) {
-            case "rock":
-                switch (computerChoice) {
-                    case "rock":
-                        console.log("Tied!");
-                        break;
-                    case "paper":
-                        console.log("You lose! Paper beats Rock");
-                        computerScore += 1;
-                        break;
-                    case "scissor":
-                        console.log("You Win! Rock beats Scissor");
-                        humanScore += 1;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "paper":
-                switch (computerChoice) {
-                    case "rock":
-                        console.log("You Win! Paper beats Rock");
-                        humanScore += 1;
-                        break;
-                    case "paper":
-                        console.log("Tied!");
-                        break;
-                    case "scissor":
-                        console.log("You Lose! Scissor beats Paper");
-                        computerScore += 1;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "scissor":
-                switch (computerChoice) {
-                    case "rock":
-                        console.log("You lose! Rock beats Scissor");
-                        computerScore += 1;
-                        break;
-                    case "paper":
-                        console.log("You Win! Scissor beats Paper");
-                        humanScore += 1;
-                        break;
-                    case "scissor":
-                        console.log("Tied!");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
+function isGameOver(){
+    if(playerScore === 5 || computerScore === 5) {
+        if(playerScore > computerScore) {
+            winnerMessage.textContent = "You Win!"
+            popup.setAttribute("style", "display: flex;");
+        }
+        else {
+            winnerMessage.textContent = "You Lose!";
+            popup.setAttribute("style", "display: flex;");
         }
     }
-
-    //repeats for 5 rounds
-    for(round = 0; round < 5; round++)  {
-        playRound(getHumanChoice(), getComputerChoice());
-    }
-    
-    //Checks who wins the Game and prints the scores
-    if(humanScore > computerScore) {
-        console.log(`You Win!
-            Computer Score : ${computerScore}
-            Human Score : ${humanScore}`);
-    }
-    else if(humanScore === computerScore) {
-        console.log(`Tied!
-            Computer Score : ${computerScore}
-            Human Score : ${humanScore}`);
-    }
-    else {
-        console.log(`You Lose!
-            Computer Score : ${computerScore}
-            Human Score : ${humanScore}`);
-    }
 }
 
-playGame();
+//compare both user's and computer's choice
+function playRound(playerChoice, computerChoice) {
+
+    if (
+        playerChoice === "rock" && computerChoice === "scissor" ||
+        playerChoice === "scissor" && computerChoice === "paper" ||
+        playerChoice === "paper" && computerChoice === "rock"
+    ) {
+        playerScore++;
+        scoreInfo.textContent = "You Win!"
+        scoreMessage.textContent = `${capitalizeFirstLetter(playerChoice)} beats ${computerChoice}`;
+    }
+    else if (
+        computerChoice === "rock" && playerChoice === "scissor" ||
+        computerChoice === "scissor" && playerChoice === "paper" ||
+        computerChoice === "paper" && playerChoice === "rock"
+    ) {
+        computerScore++;
+        scoreInfo.textContent = "You Lose!"
+        scoreMessage.textContent = `${capitalizeFirstLetter(computerChoice)} beats ${playerChoice}`;
+    }
+    else {
+        scoreInfo.textContent = "Tied!"
+    }
+
+    computerScorePara.textContent = computerScore;
+    playerScorePara.textContent = playerScore;
+    isGameOver();
+}
+
+function restartGame() {
+    playerScore = 0;
+    computerScore = 0;
+    playerScorePara.textContent = playerScore;
+    computerScorePara.textContent = computerScore;
+    scoreInfo.textContent = "Choose your weapon";
+    scoreMessage.textContent = "First to earn 5 points wins the game.";
+    popup.setAttribute("style", "display: none;")
+            
+
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+}
+
 
